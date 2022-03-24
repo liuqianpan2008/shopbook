@@ -8,13 +8,19 @@
       <div id="you">
         <el-space :size="5"
                   :spacer="spacer">
+          <el-badge :value="1"
+                    class="item">
+            <el-button type="text"
+                       :icon="ShoppingCart"> 购物车</el-button>
+          </el-badge>
           <el-button type="text"
-                     :icon="ShoppingCart"> 购物车</el-button>
-          <el-button type="text"> 帮助中心</el-button>
+                     :icon="Help"> 帮助中心</el-button>
           <el-button type="text"
-                     @click="userinfo"> 我的账户</el-button>
+                     @click="userinfo"
+                     :icon="User"> 我的账户</el-button>
           <el-button type="text"
-                     @click="register"> 新用户注册</el-button>
+                     @click="register"
+                     :icon="tools"> 新用户注册</el-button>
         </el-space>
       </div>
       <div id="daohang">
@@ -73,7 +79,7 @@
 </template>
 
 <script>
-import { ShoppingCart, Search } from '@element-plus/icons-vue'
+import { ShoppingCart, Search, Help, User, tools } from '@element-plus/icons-vue'
 import { h } from 'vue'
 import { ElDivider } from 'element-plus'
 export default {
@@ -82,12 +88,18 @@ export default {
   setup () {
     const spacer = h(ElDivider, { direction: 'vertical' })
     const userinfo = () => {
-      window.location.href = "#/userinfo";
+      console.log(window.sessionStorage.getItem('token'));
+      if (window.sessionStorage.getItem('token') == null) {
+        window.location.href = "#/login";
+      } else {
+        window.location.href = "#/userinfo/userData";
+      }
+
     }
     const register = () => {
       window.location.href = "#/register";
     }
-    return { ShoppingCart, spacer, Search, userinfo, register }
+    return { ShoppingCart, spacer, Search, userinfo, register, Help, User, tools }
   }
 }
 </script>

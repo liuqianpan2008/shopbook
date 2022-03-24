@@ -9,31 +9,40 @@
         <span>注册新用户</span>
       </template>
       <el-form :model="form"
-               label-width="80px">
-        <el-form-item label="邮箱">
+               label-width="80px"
+               ref="ruleFormRef"
+               :rules="rules">
+        <el-form-item label="邮箱"
+                      prop="mail">
           <el-input v-model="form.mail" />
         </el-form-item>
-        <el-form-item label="用户名">
+        <el-form-item label="用户名"
+                      prop="username">
           <el-input v-model="form.username" />
         </el-form-item>
-        <el-form-item label="密码">
+        <el-form-item label="密码"
+                      prop="password">
           <el-input v-model="form.userpassword"
-                    type="password" />
+                    type="userpassword" />
         </el-form-item>
-        <el-form-item label="确认密码">
+        <el-form-item label="确认密码"
+                      prop="password1">
           <el-input v-model="form.userpassword1"
-                    type="password" />
+                    type="userpassword1" />
         </el-form-item>
-        <el-form-item label="性别">
+        <el-form-item label="性别"
+                      prop="sex">
           <el-radio-group v-model="form.sex">
-            <el-radio label="男" />
-            <el-radio label="女" />
+            <el-radio label="0">男</el-radio>
+            <el-radio label="1">女</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="联系电话">
+        <el-form-item label="联系电话"
+                      prop="phone">
           <el-input v-model="form.phone" />
         </el-form-item>
-        <el-form-item label="个人介绍">
+        <el-form-item label="个人介绍"
+                      prop="introduce">
           <el-input v-model="form.introduce"
                     :autosize="{ minRows: 2, maxRows: 4 }"
                     type="textarea"
@@ -44,6 +53,7 @@
                      @click="onSubmit">注册</el-button>
         </el-form-item>
       </el-form>
+
     </el-card>
   </div>
 
@@ -51,21 +61,78 @@
 
 <script>
 import { ArrowRight } from '@element-plus/icons-vue'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 export default {
   setup () {
+    const ruleFormRef = ref()
     const form = reactive({
       mail: '',
       username: '',
       userpassword: '',
       userpassword1: '',
-      sex: [],
+      sex: '',
       phone: '',
-      introduce: ''
+      introduce: '',
     })
-    return { form, ArrowRight }
+
+    const validmail = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('邮箱不能为空'))
+      } else {
+        var pattern = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+        if (pattern.test(value)) {
+          callback()
+        } else {
+          callback(new Error('邮箱格式不正确'))
+        }
+      }
+    }
+
+    const validpassword = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== form.userpassword) {
+        callback(new Error("两次密码不一致"))
+      } else {
+        callback()
+      }
+    }
+    const rules = reactive({
+      mail: [{ validator: validmail, trigger: 'blur' }],
+      username: [
+        { required: true, message: '请输入用户名', trigger: 'blur' },
+        { min: 3, max: 5, message: '用户名长度应该在3~5之间', trigger: 'blur' }
+      ],
+      userpassword: [
+        { required: true, message: '请输入密码', trigger: 'blur' },
+        { min: 3, max: 10, message: '密码长度应该在3~10之间', trigger: 'blur' }
+      ],
+      userpassword1: [
+        { validator: validpassword, trigger: 'blur' }
+      ],
+      sex: [
+        { required: true, message: '请选择你的性别', trigger: 'change', }
+      ],
+      phone: [
+        { required: true, message: '请输入电话号码', trigger: 'blur' },
+        { min: 11, max: 11, message: '电话号码应该在11位', trigger: 'blur' }
+      ],
+      introduce: [
+        { min: 0, max: 50, message: '个人标签只支持50字符', trigger: 'blur' }
+      ]
+    })
+    const onSubmit = () => {
+      ruleFormRef.value.validate((valid) => {
+        if (valid) { console.log("验证通过"); }
+      })
+    }
+    return {
+      form, ArrowRight, rules, ruleFormRef,
+      onSubmit
+    }
   }
 }
+
 </script>
 
 <style>
