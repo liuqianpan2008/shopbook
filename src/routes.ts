@@ -5,6 +5,9 @@ import login from "./components/login.vue";
 import register from "./components/register.vue";
 import userInfo from "./components/userinfo/userinfo.vue";
 import userData from "./components/userinfo/userData.vue";
+import passworldinfo from "./components/userinfo/passworldinfo.vue";
+import mailcod from "./components/mailcod.vue";
+import noticesinfo from "./components/noticesinfo.vue";
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -12,6 +15,11 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: inedxMain,
+    },
+    {
+      path: "/noticesinfo",
+      name: "noticesinfo",
+      component: noticesinfo,
     },
     {
       path: "/login",
@@ -71,7 +79,37 @@ const router = createRouter({
             });
           },
         },
+        {
+          path: "passworldinfo",
+          name: "passworldinfo",
+          component: passworldinfo,
+          beforeEnter(to, form, next) {
+            if (window.sessionStorage.getItem("token") == null) {
+              next("/");
+            }
+            axios({
+              url: "http://127.0.0.1:8888" + "/users/userInfo",
+              method: "GET",
+              headers: {
+                satoken: window.sessionStorage.getItem("token"),
+              },
+            }).then((e) => {
+              console.log(e.data.date);
+              if (e.data.flag == false) {
+                window.sessionStorage.removeItem("token");
+                next("/login");
+              }
+              passworldinfo.userdata.value = e.data.date;
+              next();
+            });
+          },
+        },
       ],
+    },
+    {
+      path: "/mailcod/:userName/:cod",
+      name: "mailcod",
+      component: mailcod,
     },
   ],
 });

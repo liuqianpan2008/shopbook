@@ -4,7 +4,6 @@
     <el-breadcrumb-item>用户信息</el-breadcrumb-item>
   </el-breadcrumb>
   <br>
-
   <div style="min-height: 500px;">
     <el-container>
       <el-aside style="min-height: 500px;">
@@ -35,6 +34,9 @@ export default {
     const headerSelect = (index) => {
       if (index == 0) {
         window.location.href = "#/userinfo/userData";
+      }
+      if (index == 1) {
+        window.location.href = "#/userinfo/passworldinfo";
       }
     }
     return { headerSelect, ArrowRight }

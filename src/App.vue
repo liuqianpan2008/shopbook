@@ -5,6 +5,7 @@
       <el-image style="width: 100px; height: 100px"
                 src="https://s1.ax1x.com/2022/03/20/qVzwJH.jpg"
                 fit="contain" />
+      <span id="login_t">创世书城</span>
       <div id="you">
         <el-space :size="5"
                   :spacer="spacer">
@@ -19,8 +20,7 @@
                      @click="userinfo"
                      :icon="User"> 我的账户</el-button>
           <el-button type="text"
-                     @click="register"
-                     :icon="tools"> 新用户注册</el-button>
+                     @click="register"> 新用户注册</el-button>
         </el-space>
       </div>
       <div id="daohang">
@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { ShoppingCart, Search, Help, User, tools } from '@element-plus/icons-vue'
+import { ShoppingCart, Search, Help, User } from '@element-plus/icons-vue'
 import { h } from 'vue'
 import { ElDivider } from 'element-plus'
 export default {
@@ -99,7 +99,7 @@ export default {
     const register = () => {
       window.location.href = "#/register";
     }
-    return { ShoppingCart, spacer, Search, userinfo, register, Help, User, tools }
+    return { ShoppingCart, spacer, Search, userinfo, register, Help, User }
   }
 }
 </script>
@@ -115,5 +115,9 @@ export default {
 #shousuo {
   float: right;
   width: 20%;
+}
+#login_t {
+  font-size: 30px;
+  color: brown;
 }
 </style>

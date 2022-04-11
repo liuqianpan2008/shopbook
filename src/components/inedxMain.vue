@@ -22,7 +22,14 @@
         </span>
       </div>
     </template>
-    <div>这里是公告内容 <br></div>
+    <el-table :data="notice"
+              style="width: 100%"
+              @cell-click="notuicesClick">
+      <el-table-column prop="title"
+                       label="标题" />
+      <el-table-column prop="time"
+                       label="时间" />
+    </el-table>
   </el-card>
   <br>
   <el-card class="zhukapian">
@@ -44,12 +51,36 @@
 
 <script>
 import { Bell } from '@element-plus/icons-vue'
+import axios from 'axios';
+import { ref } from '@vue/reactivity';
+import { useRouter } from 'vue-router'
+import noticesinfoVue from './noticesinfo.vue';
 export default {
   components: { Bell },
   setup () {
-    return {
+    // var MarkdownIt = require('markdown-it'),
+    // md = new MarkdownIt();
+    const Router = useRouter() //跳转
+    const notice = ref([{
+      title: "无",
+      time: "无"
+    }])
+    axios.get("http://127.0.0.1:8888" + "/notices").then(e => {
+      // notice.value = md.render(e.data.data);
+      console.log(e.data.date);
+      notice.value = e.data.date
 
-      // bell
+    })
+    function notuicesClick (row) {
+      console.log(row);
+      noticesinfoVue.row.value = row;
+      Router.push({
+        path: 'noticesinfo',
+      })
+
+    }
+    return {
+      notice, notuicesClick
     }
   }
 }

@@ -20,15 +20,16 @@
                       prop="username">
           <el-input v-model="form.username" />
         </el-form-item>
+
         <el-form-item label="密码"
-                      prop="password">
+                      prop="userpassword">
           <el-input v-model="form.userpassword"
-                    type="userpassword" />
+                    show-password />
         </el-form-item>
         <el-form-item label="确认密码"
-                      prop="password1">
+                      prop="userpassword1">
           <el-input v-model="form.userpassword1"
-                    type="userpassword1" />
+                    show-password />
         </el-form-item>
         <el-form-item label="性别"
                       prop="sex">
@@ -50,7 +51,8 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary"
-                     @click="onSubmit">注册</el-button>
+                     @click="onSubmit"
+                     :loading="registering">注册</el-button>
         </el-form-item>
       </el-form>
 
@@ -62,6 +64,8 @@
 <script>
 import { ArrowRight } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
+import axios from 'axios'
+import { ElMessage } from 'element-plus'
 export default {
   setup () {
     const ruleFormRef = ref()
@@ -74,6 +78,7 @@ export default {
       phone: '',
       introduce: '',
     })
+    const registering = ref(false)
 
     const validmail = (rule, value, callback) => {
       if (value === '') {
@@ -98,7 +103,9 @@ export default {
       }
     }
     const rules = reactive({
-      mail: [{ validator: validmail, trigger: 'blur' }],
+      mail: [
+        { validator: validmail, trigger: 'blur' }
+      ],
       username: [
         { required: true, message: '请输入用户名', trigger: 'blur' },
         { min: 3, max: 5, message: '用户名长度应该在3~5之间', trigger: 'blur' }
@@ -114,7 +121,6 @@ export default {
         { required: true, message: '请选择你的性别', trigger: 'change', }
       ],
       phone: [
-        { required: true, message: '请输入电话号码', trigger: 'blur' },
         { min: 11, max: 11, message: '电话号码应该在11位', trigger: 'blur' }
       ],
       introduce: [
@@ -122,13 +128,30 @@ export default {
       ]
     })
     const onSubmit = () => {
+      registering.value = true
       ruleFormRef.value.validate((valid) => {
-        if (valid) { console.log("验证通过"); }
+        if (valid) {
+          axios.post("http://127.0.0.1:8888" + "/users/register", {
+            userName: form.username,
+            userPassword: form.userpassword,
+            mail: form.mail,
+            sex: form.sex,
+            phone: form.phone,
+            introduce: form.introduce
+          }).then((res) => {
+            console.log(res.data);
+            registering.value = false;
+            ElMessage({
+              message: res.data.msg,
+              type: 'success',
+            })
+          })
+        }
       })
     }
     return {
       form, ArrowRight, rules, ruleFormRef,
-      onSubmit
+      onSubmit, registering
     }
   }
 }
