@@ -114,6 +114,7 @@ export default {
     }
     const login = () => {
       console.log("点击了登录");
+      clearInterval(myVar);
       console.log(formdata.value.type);
       ruleFormRef.value.validate((valid) => {
         if (valid) {
@@ -129,7 +130,7 @@ export default {
               window.sessionStorage.setItem('token', ret.data.date.token)
               window.location.href = "#/userinfo/userData";
               //判断写入
-              for (let index = 0; formdata.value.type != null && index < formdata.value.type.length; index++) {
+              for (let index = 0; formdata.value.type != null && index <= formdata.value.type.length; index++) {
                 if (formdata.value.type[index] == "user") {
                   window.sessionStorage.setItem('paw', formdata.value.username)
                   if (window.sessionStorage.getItem('paw') != null) {

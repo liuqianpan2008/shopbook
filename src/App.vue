@@ -12,7 +12,8 @@
           <el-badge :value="1"
                     class="item">
             <el-button type="text"
-                       :icon="ShoppingCart"> 购物车</el-button>
+                       :icon="ShoppingCart"
+                       @click="shop"> 购物车</el-button>
           </el-badge>
           <el-button type="text"
                      :icon="Help"> 帮助中心</el-button>
@@ -26,7 +27,8 @@
       <div id="daohang">
         <el-menu class="el-menu-demo"
                  mode="horizontal"
-                 style="width:100%">
+                 style="width:100%"
+                 @select="headerSelect">
           <el-menu-item index="1">文学</el-menu-item>
           <el-menu-item index="2">生活</el-menu-item>
           <el-menu-item index="3">计算机</el-menu-item>
@@ -46,11 +48,12 @@
       </div>
       <br>
       <div id="shousuo">
-        <el-input v-model="input3"
+        <el-input v-model="Tsketch"
                   placeholder="请输入"
                   class="input-with-select">
           <template #append>
-            <el-button :icon="Search" />
+            <el-button :icon="Search"
+                       @click="sketch" />
           </template>
         </el-input>
       </div>
@@ -80,12 +83,15 @@
 
 <script>
 import { ShoppingCart, Search, Help, User } from '@element-plus/icons-vue'
-import { h } from 'vue'
+import { h, ref } from 'vue'
 import { ElDivider } from 'element-plus'
 export default {
+  //allbook
   name: 'App',
   components: {},
   setup () {
+
+    const Tsketch = ref("")
     const spacer = h(ElDivider, { direction: 'vertical' })
     const userinfo = () => {
       console.log(window.sessionStorage.getItem('token'));
@@ -99,7 +105,43 @@ export default {
     const register = () => {
       window.location.href = "#/register";
     }
-    return { ShoppingCart, spacer, Search, userinfo, register, Help, User }
+
+    const tag = ref("全部")
+    const headerSelect = (index) => {
+      console.log(index);
+      switch (index) {
+        case "1": tag.value = "文学"; break;
+        case "2": tag.value = "生活"; break;
+        case "3": tag.value = "计算机"; break;
+        case "4": tag.value = "外语"; break;
+        case "5": tag.value = "经营"; break;
+        case "6": tag.value = "励志"; break;
+        case "7": tag.value = "社科"; break;
+        case "8": tag.value = "文学"; break;
+        case "9": tag.value = "少儿"; break;
+        case "10": tag.value = "艺术"; break;
+        case "11": tag.value = "原版"; break;
+        case "12": tag.value = "科技"; break;
+        case "13": tag.value = "考试"; break;
+        case "14": tag.value = "生活百科"; break;
+        case "15": tag.value = "全部"; break;
+      }
+
+      window.location.href = "#/allbook/" + tag.value + "/all"
+      location.reload();
+    }
+    return {
+      ShoppingCart, spacer, Search, userinfo, register, Help, User, headerSelect, Tsketch,
+      shop: () => {
+        window.location.href = "#/bookshop"
+
+      }
+      , sketch: () => {
+        console.log(Tsketch.value);
+        window.location.href = "#/allbook/" + tag.value + "/" + Tsketch.value
+        location.reload();
+      }
+    }
   }
 }
 </script>

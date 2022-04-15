@@ -8,6 +8,10 @@ import userData from "./components/userinfo/userData.vue";
 import passworldinfo from "./components/userinfo/passworldinfo.vue";
 import mailcod from "./components/mailcod.vue";
 import noticesinfo from "./components/noticesinfo.vue";
+import allbook from "./components/book/allbook.vue";
+import bookinfo from "./components/book/bookinfo.vue";
+import bookshop from "./components/shopbook.vue";
+import order from "./components/order.vue";
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -15,6 +19,46 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: inedxMain,
+    },
+    {
+      path: "/order",
+      name: "order",
+      component: order,
+    },
+    {
+      path: "/bookinfo",
+      name: "bookinfo",
+      component: bookinfo,
+    },
+    {
+      path: "/bookshop",
+      name: "bookshop",
+      component: bookshop,
+      beforeEnter(to, form, next) {
+        if (window.sessionStorage.getItem("token") == null) {
+          next("/");
+        }
+        axios({
+          url: "http://127.0.0.1:8888" + "/users/shopInfo",
+          method: "GET",
+          headers: {
+            satoken: window.sessionStorage.getItem("token"),
+          },
+        }).then((e) => {
+          console.log(e.data.date);
+          if (e.data.flag == false) {
+            window.sessionStorage.removeItem("token");
+            next("/login");
+          }
+          bookshop.shopData.value = e.data.date;
+          next();
+        });
+      },
+    },
+    {
+      path: "/allbook/:tag/:sketch",
+      name: "allbook",
+      component: allbook,
     },
     {
       path: "/noticesinfo",
