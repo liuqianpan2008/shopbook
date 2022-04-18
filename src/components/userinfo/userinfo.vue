@@ -17,6 +17,9 @@
           <el-menu-item index="1">
             <span>安全中心</span>
           </el-menu-item>
+          <el-menu-item index="2">
+            <span>我的订单</span>
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-main>
@@ -37,6 +40,9 @@ export default {
       }
       if (index == 1) {
         window.location.href = "#/userinfo/passworldinfo";
+      }
+      if (index == 2) {
+        window.location.href = "#/userinfo/myorder";
       }
     }
     return { headerSelect, ArrowRight }

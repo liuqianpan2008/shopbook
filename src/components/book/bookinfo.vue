@@ -26,7 +26,7 @@
                          @change="handleChange" />
         <br />
         <br />
-        <el-button>下单购买</el-button>
+        <el-button @click="paybook">下单购买</el-button>
         <el-button @click="addshop">加入购物车</el-button>
       </div>
 
@@ -99,7 +99,10 @@ export default {
         }
       });
     }
-    return { bookData, addshop, num }
+    const paybook = () => {
+
+    }
+    return { bookData, addshop, num, paybook }
   }
 }
 </script>

@@ -17,7 +17,7 @@
   <div class="Totalprice">总价:{{Totalprice}}元</div><br>
   <el-button v-show="delbt"
              @click="dalshop">删除</el-button>
-  <el-button>去结算</el-button>
+  <el-button @click="pay">去结算</el-button>
 
 </template>
 
@@ -25,6 +25,8 @@
 import { ref } from '@vue/reactivity'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+// import order from './order.vue'
+import { v4 as uuidv4 } from 'uuid'
 const shopData = ref([{
   name: "无",
   unitprice: 1,
@@ -71,7 +73,32 @@ export default {
       location.reload();
       ElMessage.success("删除成功")
     }
-    return { shopData, handleSelectionChange, Totalprice, delbt, dalshop }
+    const pay = () => {
+      // order.payinfo.value = shopData.value
+      let onlyUuid = uuidv4()
+      shops.value.forEach(v => {
+        axios({
+          url: "http://127.0.0.1:8888" + "/users/orderadd",
+          method: "POST",
+          headers: {
+            satoken: window.sessionStorage.getItem("token"),
+          },
+          data: {
+            bookid: onlyUuid,
+            bookname: v.name,
+            num: v.quantity,
+          }
+        }).then(e => {
+          if (!e.data.date) {
+            ElMessage.error(e.data.msg)
+            window.location.href = "#/bookshop"
+          }
+        })
+      })
+      window.location.href = "#/order/" + onlyUuid
+
+    }
+    return { shopData, handleSelectionChange, Totalprice, delbt, dalshop, pay }
   }
 }
 </script>

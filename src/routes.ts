@@ -12,6 +12,7 @@ import allbook from "./components/book/allbook.vue";
 import bookinfo from "./components/book/bookinfo.vue";
 import bookshop from "./components/shopbook.vue";
 import order from "./components/order.vue";
+import myorder from "./components/userinfo/myorder.vue";
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -21,7 +22,7 @@ const router = createRouter({
       component: inedxMain,
     },
     {
-      path: "/order",
+      path: "/order/:bookid",
       name: "order",
       component: order,
     },
@@ -144,6 +145,31 @@ const router = createRouter({
                 next("/login");
               }
               passworldinfo.userdata.value = e.data.date;
+              next();
+            });
+          },
+        },
+        {
+          path: "myorder",
+          name: "myorder",
+          component: myorder,
+          beforeEnter(to, form, next) {
+            if (window.sessionStorage.getItem("token") == null) {
+              next("/");
+            }
+            axios({
+              url: "http://127.0.0.1:8888" + "/users/orderuser",
+              method: "POST",
+              headers: {
+                satoken: window.sessionStorage.getItem("token"),
+              },
+            }).then((e) => {
+              console.log(e.data.date);
+              if (e.data.flag == false) {
+                window.sessionStorage.removeItem("token");
+                next("/login");
+              }
+              myorder.datas.value = e.data.date;
               next();
             });
           },
