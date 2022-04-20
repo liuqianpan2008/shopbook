@@ -19,7 +19,7 @@
   * [Sa-Token](http://sa-token.dev33.cn/)==>权限认证
 
 ## 实现功能
-
+演示视频:https://www.bilibili.com/video/BV1Ba411v7PL
 * 用户系统
   - [x] 登录
     - [x] 扫码登录（理论实现，无手机无法展示）
