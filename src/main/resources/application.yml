@@ -1,0 +1,23 @@
+server:
+  port: 8888
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bootshop?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: root
+  mail:
+    host: smtp.exmail.qq.com
+    username: liugan@sc3248.wecom.work
+    password: CraqtDX77NDp7FXg
+    port: 587
+    default-encoding: UTF-8
+    fromMail:
+      addr: liugan@sc3248.wecom.work
+
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
