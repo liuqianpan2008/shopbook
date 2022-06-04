@@ -1,10 +1,10 @@
-package com.fenglin.Config
+package com.fenglin.config
 
 import cn.dev33.satoken.exception.DisableLoginException
 import cn.dev33.satoken.exception.NotLoginException
 import cn.dev33.satoken.exception.NotPermissionException
 import cn.dev33.satoken.exception.NotRoleException
-import com.fenglin.Utils.Res
+import com.fenglin.utils.Res
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody

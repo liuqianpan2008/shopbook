@@ -8,5 +8,6 @@ data class User(
     val sex : String, //性别
     val phone : String?, //电话
     val introduce : String?, //个人介绍
-    var mailcod : String?
+    var mailcod : String?,
+    var admin:String?
 )

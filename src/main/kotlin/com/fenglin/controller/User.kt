@@ -3,43 +3,44 @@ package com.fenglin.controller
 import cn.dev33.satoken.annotation.SaCheckLogin
 import cn.dev33.satoken.stp.StpUtil
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
-import com.fenglin.Utils.Res
+import com.baomidou.mybatisplus.core.metadata.IPage
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page
+import com.fenglin.utils.Res
 import com.fenglin.dao.OrderDao
-import com.fenglin.dao.bookDao
-import com.fenglin.dao.userDao
+import com.fenglin.dao.BookDao
+import com.fenglin.dao.UserDao
 import com.fenglin.domain.User
-import com.fenglin.domain.bookorder
+import com.fenglin.domain.Bookorder
 import com.fenglin.domain.shop
 import com.fenglin.service.impl.MailServiceImpl
 import com.fenglin.service.impl.ShopServicelmpl
-import com.fenglin.service.impl.orderServicelmpl
-import com.fenglin.service.impl.userServiceImpl
+import com.fenglin.service.impl.OrderServicelmpl
+import com.fenglin.service.impl.UserServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import java.util.concurrent.TimeUnit
-import java.util.stream.Collectors
 
 
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/users")
-class user(
+class User(
     @Autowired
-    internal val userService: userServiceImpl,
+    internal val userService: UserServiceImpl,
     @Autowired
     internal val MailServiceImpl: MailServiceImpl,
     @Autowired
     internal val RedisTemplate: StringRedisTemplate,
     @Autowired
-    internal val userDao: userDao,
+    internal val userDao: UserDao,
     @Autowired
     internal val shopServicelmpl: ShopServicelmpl,
     @Autowired
-    internal val orderServicelmpl: orderServicelmpl,
+    internal val orderServicelmpl: OrderServicelmpl,
     @Autowired
-    internal val bookDao: bookDao,
+    internal val bookDao: BookDao,
     @Autowired
     internal val orderDao: OrderDao,
 ) {
@@ -56,9 +57,14 @@ class user(
         }
         val id = userService.login(userName,userPassword)
     return if (id>0) {
-            StpUtil.login(id)
-            val r= mapOf("cod" to  "true","token" to StpUtil.getTokenValue())
-            Res(msg = "登录成功", date = r)
+            if (userDao.selectById(id).admin == "受限"){
+                val r= mapOf("cod" to "false")
+                Res(msg = "账户受限禁止登陆", date = r)
+            }else{
+                StpUtil.login(id)
+                val r= mapOf("cod" to  "true","token" to StpUtil.getTokenValue())
+                Res(msg = "登录成功", date = r)
+            }
         } else {
             val r= mapOf("cod" to "false")
             Res(msg = "登录失败,账号或者密码有误", date = r)
@@ -148,20 +154,20 @@ class user(
         bookQw.eq("name", bookname)
         //   查询之前是否已添加过订单
          bookDao.selectOne(bookQw)?.id?.let {
-             val orderQw = QueryWrapper<bookorder>()
+             val orderQw = QueryWrapper<Bookorder>()
              orderQw.eq("bookid",it)
              orderQw.eq("userid",StpUtil.getLoginId()?.toString())
              if(orderDao.selectOne(orderQw) != null) return Res(date = false, msg = "你已经添加过这个订单了！")
          }
         //        添加订单
-        val bookorder = bookorder(
-            data["bookid"]?:"",
-            StpUtil.getLoginId()?.toString()?.toInt()?:0,
-            bookDao.selectOne(bookQw)?.id?:0,
-            data["num"]?.toInt()?:0 ,
-            data["name"]?:"",
-            data["phone"]?:"",
-            data["addr"]?:""
+        val bookorder = Bookorder(
+            data["bookid"] ?: "",
+            StpUtil.getLoginId()?.toString()?.toInt() ?: 0,
+            bookDao.selectOne(bookQw)?.id ?: 0,
+            data["num"]?.toInt() ?: 0,
+            data["name"] ?: "",
+            data["phone"] ?: "",
+            data["addr"] ?: ""
         )
         return if (orderServicelmpl.save(bookorder)) Res(date = true, msg = "添加订单成功！") else Res(date = false, msg = "添加订货失败！")
     }
@@ -171,7 +177,7 @@ class user(
     @PostMapping("orderinfo")
     fun orderinfo(@RequestBody data: Map<String, String>): Res {
         val bookid = data["bookid"]?:""
-        val bookQw = QueryWrapper<bookorder>()
+        val bookQw = QueryWrapper<Bookorder>()
         bookQw.eq("userid", StpUtil.getLoginId()?.toString()?.toInt()?:0)
         bookQw.eq("orderid", bookid)
         val books = orderDao.selectList(bookQw)
@@ -185,7 +191,7 @@ class user(
     @CrossOrigin("*")
     @PostMapping("orderuser")
     fun orderuser(): Res {
-        val orderQw = QueryWrapper<bookorder>()
+        val orderQw = QueryWrapper<Bookorder>()
         orderQw.eq("userid", StpUtil.getLoginId()?.toString()?.toInt()?:0)
         var orders = orderDao.selectList(orderQw);
         //查书
@@ -202,7 +208,7 @@ class user(
     @PostMapping("orderput")
     fun orderput(@RequestBody data: Map<String, String>): Res {
         val bookid = data["bookid"]?:""
-        val bookQw = QueryWrapper<bookorder>()
+        val bookQw = QueryWrapper<Bookorder>()
         bookQw.eq("userid", StpUtil.getLoginId()?.toString()?.toInt()?:0)
         bookQw.eq("orderid", bookid)
         orderDao.selectList(bookQw).forEach{
@@ -222,7 +228,7 @@ class user(
     @PostMapping("paysee")
     fun paysee(@RequestBody data: Map<String, String>): Res {
         val bookid = data["bookid"]?:""
-        val bookQw = QueryWrapper<bookorder>()
+        val bookQw = QueryWrapper<Bookorder>()
         bookQw.eq("userid", StpUtil.getLoginId()?.toString()?.toInt()?:0)
         bookQw.eq("orderid", bookid)
         orderDao.selectList(bookQw).forEach{
@@ -364,5 +370,22 @@ class user(
             }
         }
         return Res(flag = false, date=false, msg = "内部错误")
+    }
+//  查询用户
+    @CrossOrigin("*")
+    @PostMapping("/userallq")
+    fun userallq(@RequestBody data: Map<String,String>): Res {
+        val qwUser = QueryWrapper<User>()
+        data["search"]?.let {
+            if (it != "") {
+                qwUser.like("user_name", it)
+            }
+        }
+        val iPage: IPage<User> = Page(data["current"]?.toLong()?:0, data["size"]?.toLong()?:0)
+        val notices=userDao.selectPage(iPage,qwUser)
+        notices?.let {
+            return Res(date = it, msg = "获取成功！")
+        }
+        return Res(flag = false, msg = "无数据！")
     }
 }

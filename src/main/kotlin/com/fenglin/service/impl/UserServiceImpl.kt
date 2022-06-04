@@ -2,17 +2,17 @@ package com.fenglin.service.impl
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
-import com.fenglin.dao.userDao
+import com.fenglin.dao.UserDao
 import com.fenglin.domain.User
 import com.fenglin.service.IuserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class userServiceImpl(
+class UserServiceImpl(
     @Autowired
-    internal val userDao: userDao
-) : ServiceImpl<userDao, User>(), IuserService {
+    internal val userDao: UserDao
+) : ServiceImpl<UserDao, User>(), IuserService {
 //    登录成功返回id，失败返回-1
     override fun login(userName: String, userpasswd: String): Int {
         val qwUser = QueryWrapper<User>()

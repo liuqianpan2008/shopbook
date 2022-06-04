@@ -1,10 +1,9 @@
 package com.fenglin.dao
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper
-import com.fenglin.domain.User
+import com.fenglin.domain.Notice
 import org.apache.ibatis.annotations.Mapper
 
 @Mapper
-interface userDao : BaseMapper<User>{
-
+interface NoticeDao: BaseMapper<Notice> {
 }

@@ -1,4 +1,4 @@
-package com.fenglin.Config
+package com.fenglin.config
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor

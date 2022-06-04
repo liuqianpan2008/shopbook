@@ -1,8 +1,8 @@
 package com.fenglin.service
 
 import com.baomidou.mybatisplus.extension.service.IService
-import com.fenglin.domain.notice
+import com.fenglin.domain.Notice
 
-interface InoticeServuce : IService<notice> {
+interface InoticeServuce : IService<Notice> {
 
 }
